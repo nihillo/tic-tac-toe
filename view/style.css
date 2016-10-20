@@ -1,0 +1,38 @@
+* {
+	box-sizing: border-box;
+}
+
+body {
+	color: #999;
+	font-family: Arial, sans-serif;
+	font-weight: bold;
+	font-size: 20px;
+}
+
+.board {
+	width: 180px;
+	height: 180px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 30vh;
+
+
+}
+
+.cell {
+	font-size: 32px;
+ 	display: inline-block;
+ 	margin: 5px;
+ 	background-color: #eee;
+ 	width: 50px;
+ 	height: 50px;
+ 	vertical-align: top;
+ 	text-align: center;
+ 	padding-top: 4px;
+}
+
+#message {
+	width: 100%;
+	text-align: center;
+	margin-top: 25px;
+}
