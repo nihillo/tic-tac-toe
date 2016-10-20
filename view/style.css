@@ -28,6 +28,11 @@ body {
  	vertical-align: top;
  	text-align: center;
  	padding-top: 4px;
+ 	cursor: pointer;
+}
+
+.cell:hover {
+	background-color: #ccc;
 }
 
 #message {
