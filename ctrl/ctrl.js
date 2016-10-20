@@ -36,7 +36,7 @@ class Controller {
 
 	checkFinished() {
 		if (game.finished) {
-			this.showMessage(this.messages.finished);
+			// this.showMessage(this.messages.finished + '<br/>');
 			if (game.winner) {
 				this.showMessage(this.messages.winner);
 			} else {
@@ -55,11 +55,11 @@ class Controller {
 class Messages {
 	constructor() {
 		this.finished = 'Game finished.';
-		this.tie = 'It\'s a tie.';
+		this.tie = 'It\'s a tie';
 	}
 
 	get winner() {
-		return 'Winner: Player ' + game.winner.id +'.';
+		return 'Player ' + game.winner.id + ' wins';
 	}
 }
 
