@@ -30,10 +30,6 @@ class Controller {
 		}
 	}
 
-	move() {
-
-	}
-
 	checkFinished() {
 		if (game.finished) {
 			// this.showMessage(this.messages.finished + '<br/>');
@@ -62,12 +58,3 @@ class Messages {
 		return 'Player ' + game.winner.id + ' wins';
 	}
 }
-
-
-
-
-
-// Init controller
-window.onload = function(){
-	controller = new Controller();
-};
