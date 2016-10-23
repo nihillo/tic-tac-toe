@@ -1,4 +1,4 @@
 // Init controller
 window.onload = function(){
-	controller = new Controller();
+	controller = new CtrlGame();
 };
