@@ -1,7 +1,14 @@
 class TicTacToe {
-	constructor() {
+	constructor(mode) {
+		this.mode = mode;
 		this.board = new Board(this);
-		this.players = [new Player(1, 1), new Player(2, -1)];
+
+		if (this.mode == 'pvp') {
+			this.players = [new Player(1, 1), new Player(2, -1)];
+		} else if (this.mode == 'pvai') {
+			this.players = [new Player(1, 1), new AI(2, -1, this)];
+		}
+		
 		
 		this.trackers = [
 			// Rows
@@ -46,6 +53,10 @@ class TicTacToe {
 			this.board.countCell();
 			this.callTrackers(row, col);
 			this.changeTurn();
+		}
+
+		if (this.mode == 'pvai' && this.turn == 1) {
+			this.players[1].move();
 		}
 	}
 

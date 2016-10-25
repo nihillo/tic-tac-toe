@@ -1,4 +1,2 @@
-// Init controller
-window.onload = function(){
-	controller = new CtrlGame();
-};
+// Init router
+window.onload = route;

@@ -1,9 +1,38 @@
+class CtrlSelector {
+	constructor() {
+		this.view = new ViewSelector();
+
+		var self = this;
+
+		this.view.selectorForm.addEventListener('submit', function(e){
+		    e.preventDefault();    //stop form from submitting
+	       	
+	       	var mode = self.view.selectorForm.mode.value;
+	       	var stones = self.view.selectorForm.stones.value;
+			// if (self.view.selectorForm.stones.value == 'reversed') {
+			// 	stones.reverse();
+			// }
+
+			location.hash = `#game/${mode}/${stones}`;
+			location.reload();
+		});
+	}
+}
+
+
 class CtrlGame {
-	constructor(){
-		this.game = new TicTacToe();
-		this.view = new ViewGame();
+	constructor(mode, stones = 'straight'){
+		
+		this.game = new TicTacToe(mode);
+		
+		this.view = new ViewGame(stones);
 
 		this.generateEvents();
+
+		// this.mode = mode;
+		// if (stones == 'straight') {
+		// 	this.stones
+		// }
 
 	}
 
@@ -35,7 +64,4 @@ class CtrlGame {
 			}
 		}
 	}
-
-	
-
 }

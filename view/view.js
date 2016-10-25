@@ -4,9 +4,42 @@ class View {
 	}
 }
 
-class ViewGame extends View {
-	constructor () {
+
+class ViewSelector extends View {
+	constructor() {
 		super();
+
+		this.selector = document.createElement('section');
+		this.selector.className = 'selector';
+		this.selector.innerHTML = `
+			<form id ="selector-form">
+				<div>
+					<label for="mode">Select mode:</label>
+					<input type="radio" name="mode" value="pvp" checked><span class="selector">PvP</span>
+	  				<input type="radio" name="mode" value="pvai"><span class="selector">PvAI</span>
+				</div>
+				<div>
+					<label for="stones">Select stones:</label>
+					<span class="stones-mode">Player 1</span>
+					<select name="stones">
+						<option value="straight">x | o</option>
+						<option value="reversed">o | x</option>
+					</select>
+					<span class="stones-mode">Player 2 / AI</span>
+				</div>
+				<input type="submit" value="PLAY!">
+			</form>
+		`;
+		this.content.appendChild(this.selector);
+		this.selectorForm = document.getElementById('selector-form');
+	}
+}
+
+class ViewGame extends View {
+	constructor (stones) {
+		super();
+
+		stones == 'straight' ? this.stones = ['x', 'o'] : this.stones = ['o', 'x'];
 
 		this.board = document.createElement('section');
 		this.board.className = 'board';
@@ -46,6 +79,7 @@ class ViewGame extends View {
 	}
 
 	setStone(element, turn) {
-		turn === 0 ? element.innerHTML = 'x' : element.innerHTML = 'o';
+		element.innerHTML = this.stones[turn];
+
 	}
 }
