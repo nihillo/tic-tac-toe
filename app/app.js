@@ -45,17 +45,18 @@ class TicTacToe {
 	}
 
 	move (row, col) {
-		if (this.finished) {
-		} else if (this.board.cells[row][col].value){
+		if (this.board.cells[row][col].value){
 			console.log('Movement not allowed: cell already in use');
 		} else {
-			this.board.cells[row][col].setValue(this.players[this.turn].stone);
+			var cell = this.board.cells[row][col];
+			cell.setValue(this.players[this.turn].stone);
 			this.board.countCell();
-			this.callTrackers(row, col);
+			this.callTrackers(cell.trackers);
 			this.changeTurn();
 		}
 
-		if (this.mode == 'pvai' && this.turn == 1) {
+		if (this.mode == 'pvai' && this.turn == 1 && !this.finished) {
+			console.log('AI moving');
 			this.players[1].move();
 		}
 	}
@@ -76,40 +77,11 @@ class TicTacToe {
 	}
 
 
-	callTrackers(row, col) {
-		switch (row) {
-			case 0:
-				this.trackers[0].track();
-				break;
-			case 1:
-				this.trackers[1].track();
-				break;
-			case 2:
-				this.trackers[2].track();
-				break;
-		}
-
-		switch (col) {
-			case 0:
-				this.trackers[3].track();
-				break;
-			case 1:
-				this.trackers[4].track();
-				break;
-			case 2:
-				this.trackers[5].track();
-				break;
-		}
-
-		if (row == col){
-			this.trackers[6].track();
-
-		}
-
-		if (row + col == 2){
-			this.trackers[7].track();
-
-		}
+	callTrackers(trackers) {
+		// var self = this;
+		trackers.forEach((value)=>{
+			this.trackers[value].track();
+		});
 	}
 }
 
@@ -124,17 +96,30 @@ class Board {
 			[new Cell(2, 0), new Cell(2, 1), new Cell(2, 2)]
 		];
 
-		this.freeCells = 9;
+		this.freeCellsCount = 9;
 	}
 
 	countCell() {
-		this.freeCells--;
+		this.freeCellsCount--;
 
-		if (!this.freeCells) {
+		if (!this.freeCellsCount) {
 			this.game.finish();
 		}
 	}
 
+
+	get freeCells() {
+		var freeCells = [];
+		this.cells.forEach(function(row){
+			row.map(function(cell){
+				if (!cell.value) {
+					freeCells.push(cell);
+				}
+			});
+		});
+
+		return freeCells;
+	}
 }
 
 
@@ -146,6 +131,49 @@ class Cell {
 
 	setValue(value) {
 		this.value = value;
+	}
+
+	get trackers () {
+		var row = this.position[0];
+		var col = this.position[1];
+
+		var trackers = [];
+
+		switch (row) {
+			case 0:
+				trackers.push(0);
+				break;
+			case 1:
+				trackers.push(1);
+				break;
+			case 2:
+				trackers.push(2);
+				break;
+		}
+
+		switch (col) {
+			case 0:
+				trackers.push(3);
+				break;
+			case 1:
+				trackers.push(4);
+				break;
+			case 2:
+				trackers.push(5);
+				break;
+		}
+
+		if (row == col){
+			trackers.push(6);
+
+		}
+
+		if (row + col == 2){
+			trackers.push(7);
+
+		}
+
+		return trackers;
 	}
 }
 

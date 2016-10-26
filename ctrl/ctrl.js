@@ -24,25 +24,21 @@ class CtrlGame {
 	constructor(mode, stones = 'straight'){
 		
 		this.game = new TicTacToe(mode);
-		
-		this.view = new ViewGame(stones);
+		this.mode = mode;
+
+		this.view = new ViewGame(stones, mode);
 
 		this.generateEvents();
 
-		// this.mode = mode;
-		// if (stones == 'straight') {
-		// 	this.stones
-		// }
+
+		this.view.showMessage('turn', this.game.turn);
 
 	}
 
 	bindEvent(element, row, col){
-		var self = this;
-		element.addEventListener('click', function(){
-			if (!self.game.finished) {
-				self.view.setStone(element, self.game.turn);
-				self.game.move(row, col);
-				self.checkFinished();
+		element.addEventListener('click', () => {
+			if (!this.game.finished) {
+				this.move(row, col);
 			}
 		});
 	}
@@ -53,6 +49,14 @@ class CtrlGame {
 				this.bindEvent(this.view.getCell(row, col), row, col);
 			}
 		}
+	}
+
+	move (row, col) {
+		var element = this.view.getCell(row, col);
+		this.view.setStone(element, this.game.turn);
+		this.game.move(row, col);
+		this.checkFinished();
+		this.view.showMessage('turn', this.game.turn);
 	}
 
 	checkFinished() {

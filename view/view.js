@@ -36,9 +36,9 @@ class ViewSelector extends View {
 }
 
 class ViewGame extends View {
-	constructor (stones) {
+	constructor (stones, mode) {
 		super();
-
+		this.mode = mode;  
 		stones == 'straight' ? this.stones = ['x', 'o'] : this.stones = ['o', 'x'];
 
 		this.board = document.createElement('section');
@@ -56,6 +56,10 @@ class ViewGame extends View {
 		`;
 		this.content.appendChild(this.board);
 
+		this.turn = document.createElement('div');
+		this.turn.id = 'message';
+		this.content.appendChild(this.turn);
+
 		this.msg = document.createElement('div');
 		this.msg.id = 'message';
 		this.content.appendChild(this.msg);
@@ -66,20 +70,39 @@ class ViewGame extends View {
 	}
 
 	showMessage(message, ...args) {
-		var msg;
+		this.mode == 'pvp' ? this.pl2text = 'Player 2' : this.pl2text = 'AI';
+
+		var msg, trn;
 		switch (message) {
 			case 'winner':
-				msg = 'Player ' + args[0] + ' wins';
+				this.content.removeChild(this.turn);
+				
+				var player = 'Player ' + args[0];
+				if (player == 'Player 2') {
+					player = this.pl2text;
+				}
+				
+				msg = player + ' wins';
+				this.msg.innerHTML = msg;
 				break;
 			case 'tie':
+				this.content.removeChild(this.turn);
 				msg = 'It\'s a tie';
+				this.msg.innerHTML = msg;
 				break;
+			case 'turn':
+				var player;
+				if (args[0] === 0) {
+					player = 'Player 1';
+				} else {
+					player = this.pl2text;
+				}
+				trn = `${player}'s turn`;
+				this.turn.innerHTML = trn;
 		}
-		this.msg.innerHTML = msg;
 	}
 
 	setStone(element, turn) {
 		element.innerHTML = this.stones[turn];
-
 	}
 }
