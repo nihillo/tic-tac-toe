@@ -9,13 +9,14 @@ class AI extends Player{
 		
 		setTimeout(() => {
 			controller.move(cell[0], cell[1]);
-			console.log('AI moving to' + cell);
+			// console.log('AI moving to' + cell);
 		},
 		1000);	
 	}
 
 	selectMovement(){
 		var choice;
+
 		// 1. Get free cells (copy array)
 		var possibleCells = this.game.board.freeCells.slice();
 
@@ -25,104 +26,86 @@ class AI extends Player{
 		//    per round. 
 
 		// Condition hierarchy:
-		
-		// 	1. Win the game
-		if (!choice) { // for every condition, check if a choice has been done
-			var winningCells = this.winGame(possibleCells);	
+		var conditionSequence = [
+			this.winGame,						// 1. Try to win the game
+			this.avoidOpponentWin,				// 2. Try the opponent not to win the game
+			this.avoidOpponentProbabilities,	// 3. Try the opponent not to increase winning probabilities
+			this.increaseOwnProbabilities,		// 4. Increase own winning probabilities
+			this.mostCombinations,				// 5. Choose the cell with most combinations
+			this.randomChoice					// 6. If not decided yet, randomize choice
+		];
 
-			if (winningCells.length == 1) {
-				// If one cell matches this condition, choose it. 
-				choice = winningCells[0];
-
-			} else if (winningCells.length > 1) {
-				// 	If more than one cell match this condition, randomize choice.
-				choice = this.randomChoice(winningCells);
+		conditionSequence.forEach((condition) => {
+			// console.log('foreach: ' + this);
+			if (!choice) {
+				var conditionEvaluation = this.evalCondition(condition, possibleCells);
+				console.log(conditionEvaluation);
+				// if a choice was taken during condition evaluation, overwrite it
+				if (conditionEvaluation.choice) {
+					choice = conditionEvaluation.choice;
+				}
+				// if possible cells were reduced, overwrite variable
+				if (conditionEvaluation.possibleCells) {
+					possibleCells = conditionEvaluation.possibleCells;
+				}
 			}
-		} // If no cell matches this condition, continue to next
-		
-		
-		// 	2. Avoid opponent winning the game
-		if (!choice) { // for every condition, check if a choice has been done
-			var opWinningCells = this.avoidOpponentWin(possibleCells);	
-
-			if (opWinningCells.length == 1) {
-				// If one cell matches this condition, choose it. 
-				choice = opWinningCells[0];
-
-			} else if (opWinningCells.length > 1) {
-				// 	If more than one cell match this condition, randomize choice.
-				choice = this.randomChoice(opWinningCells);
-			}
-		} // If no cell matches this condition, continue to next
-
-
-
-		// 	3. Avoid oppenent to increase probabilities of winning the game
-		if (!choice) {
-			var opIncreasingCells = this.avoidOpponentProbabilities(possibleCells);
-
-			if (opIncreasingCells.length == 1){
-				//	If one cell matches this condition, choose it
-				choice = opIncreasingCells[0];
-			} else if (opIncreasingCells.length > 1){
-				//	If more than one cell match this condition, remove cells which
-				//	don't match from possibleCells and continue to next
-				possibleCells = opIncreasingCells;
-			}
-		}	//	If no cell matches this condition, continue to next
-		
-		
-		
-		// 	4. Increase own probabilities of winning the game
-		if (!choice) {
-			var increasingCells = this.avoidOpponentProbabilities(possibleCells);
-
-			if (increasingCells.length == 1){
-				//	If one cell matches this condition, choose it
-				choice = increasingCells[0];
-			} else if (increasingCells.length > 1){
-				//	If more than one cell match this condition, remove cells which
-				//	don't match from possibleCells and continue to next
-				possibleCells = increasingCells;
-			}
-		}	//	If no cell matches this condition, continue to next
-	
-
-
-		// 	5. Choose the cell with most combinations
-		if (!choice) {
-			var most = this.mostCombinations(possibleCells);
-
-			if (most.length == 1) {
-				choice = most[0];
-			} else if (most.length > 1) {
-				choice = this.randomChoice(possibleCells);
-			}
-		}
-
-
-
- 		//	6. If still didn't decide, randomize choice
- 		if (!choice) {
-			choice = this.randomChoice(possibleCells);
-		}
+		});
 
 		return choice;
 	}
 
+	evalCondition(condition, possibleCells) {
+		// console.log('evalCondition: ' + this);
+		var choice;
+		var options = condition(this, possibleCells);	
+		// console.log(options());
+
+		if (condition == this.randomChoice){
+			choice = this.randomChoice(this, options);
+		} 
+
+		else {
+			if (options.length == 1) {
+				// If one cell matches this condition, choose it. 
+				choice = options[0];
+
+			} else if (options.length > 1) {
+				// 	If more than one cell match this condition... 
+				
+				switch (condition){
+					case this.wingame:
+					case this.avoidOpponentWin:
+					case this.mostCombinations:
+						//...randomize choice, for defining conditions
+						choice = this.randomChoice(this, options); 
+						break;
+					default:
+						//...remove possibilities not matching the condition, for accumulative conditions
+						possibleCells = options; 
+				}
+				
+			}
+		}
+
+		return {choice: choice, possibleCells: possibleCells};
+	}
+
+
+
 	// CONDITIONS SET
 	
 	// 1. Win the game
-	winGame(possibleCells) {
+	winGame(self, possibleCells) {
 		//	Build array of winning cells, from possibleCells
-
+		
 		var winningCells = [];
 
 		possibleCells.forEach((cell) => {
 			// If AI moves to this cell, it wins the game
 			// There is at least one tracker containing the cell which sum equals -2
 			var isWinningCell = cell.trackers.some((value) => {
-				return this.game.trackers[value].sum == -2;
+				
+				return self.game.trackers[value].sum == -2;
 			});
 
 			if (isWinningCell) {
@@ -134,7 +117,7 @@ class AI extends Player{
 	}
 
 	// 2. Avoid opponent winning the game
-	avoidOpponentWin(possibleCells){
+	avoidOpponentWin(self, possibleCells){
 		//	Build array of opponent's winning cells, from possibleCells
 
 		var opWinningCells = [];
@@ -143,7 +126,7 @@ class AI extends Player{
 			// If opponent moves to this cell, they win the game
 			// There is at least one tracker containing the cell which sum equals 2
 			var isOpWinningCell = cell.trackers.some((value) => {
-				return this.game.trackers[value].sum == 2;
+				return self.game.trackers[value].sum == 2;
 			});
 
 			if (isOpWinningCell) {
@@ -155,7 +138,7 @@ class AI extends Player{
 	}
 
 	// 3. Avoid opponent to increase probabilities of winning the game
-	avoidOpponentProbabilities(possibleCells){
+	avoidOpponentProbabilities(self, possibleCells){
 		//	Build array of opponent's increasing posibilities cells, from possibleCells
 
 		var opIncreasingCells = [];
@@ -165,7 +148,7 @@ class AI extends Player{
 			// more movement win the game
 			// There is at least one tracker containing the cell which sum equals 1
 			var isOpIncreasingCell = cell.trackers.some((value) => {
-				return this.game.trackers[value].sum == 1;
+				return self.game.trackers[value].sum == 1;
 			});
 
 			if (isOpIncreasingCell) {
@@ -177,7 +160,7 @@ class AI extends Player{
 	}
 
 	// 4. Increase AI's probabilities of winning the game
-	increaseOwnProbabilities(cell){
+	increaseOwnProbabilities(self, possibleCells){
 		//	Build array of opponent's increasing posibilities cells, from possibleCells
 
 		var increasingCells = [];
@@ -187,7 +170,7 @@ class AI extends Player{
 			// more movement wins the game
 			// There is at least one tracker containing the cell which sum equals -1
 			var isIncreasingCell = cell.trackers.some((value) => {
-				return this.game.trackers[value].sum == -1;
+				return self.game.trackers[value].sum == -1;
 			});
 
 			if (isIncreasingCell) {
@@ -199,7 +182,7 @@ class AI extends Player{
 	}
 
 	// 	5. Choose the cell with more combinations
-	mostCombinations(possibleCells) {
+	mostCombinations(self, possibleCells) {
 		// Build array of cells with more combinations (trackers)
 
 		var most = [];
@@ -224,7 +207,7 @@ class AI extends Player{
 
 
 	//	6. If still didn't decide, randomize choice 
-	randomChoice(possibleCells) {
+	randomChoice(self, possibleCells) {
 		return possibleCells[randInt(0, possibleCells.length - 1)];
 	}
 

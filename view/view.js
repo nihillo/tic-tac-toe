@@ -41,6 +41,9 @@ class ViewGame extends View {
 		this.mode = mode;  
 		stones == 'straight' ? this.stones = ['x', 'o'] : this.stones = ['o', 'x'];
 
+		this.mode == 'pvp' ? this.pl1text = 'Player 1' : this.pl1text = 'Player';
+		this.mode == 'pvp' ? this.pl2text = 'Player 2' : this.pl2text = 'AI';
+
 		this.board = document.createElement('section');
 		this.board.className = 'board';
 		this.board.innerHTML =`
@@ -70,18 +73,15 @@ class ViewGame extends View {
 	}
 
 	showMessage(message, ...args) {
-		this.mode == 'pvp' ? this.pl2text = 'Player 2' : this.pl2text = 'AI';
+		
+
+		var player;
+		args[0] == 0 ? player = this.pl1text : player = this.pl2text;
 
 		var msg, trn;
 		switch (message) {
 			case 'winner':
 				this.content.removeChild(this.turn);
-				
-				var player = 'Player ' + args[0];
-				if (player == 'Player 2') {
-					player = this.pl2text;
-				}
-				
 				msg = player + ' wins';
 				this.msg.innerHTML = msg;
 				break;
@@ -91,14 +91,9 @@ class ViewGame extends View {
 				this.msg.innerHTML = msg;
 				break;
 			case 'turn':
-				var player;
-				if (args[0] === 0) {
-					player = 'Player 1';
-				} else {
-					player = this.pl2text;
-				}
 				trn = `${player}'s turn`;
 				this.turn.innerHTML = trn;
+				break;
 		}
 	}
 
