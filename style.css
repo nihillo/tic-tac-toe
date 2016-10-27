@@ -71,3 +71,63 @@ button:hover {
 .movements {
 	text-align: left;
 }
+
+select {
+    border: 0;
+    font-size: inherit;
+    font-family: inherit;
+    color: inherit;
+    background-color: #eee;
+    padding: 2px 10px;
+    cursor: pointer;
+}
+
+.label-primary {
+	font-size: 0.8em;
+    color: #ccc;
+    line-height: 2em;
+}
+
+input[name="mode"] {
+	margin-bottom: 30px;
+	visibility: hidden;
+}
+
+input[name="mode"]+label{ 
+	cursor: pointer;
+	padding: 2px 10px;
+} 
+
+input[name="mode"]+label:hover{ 
+	background-color: #ddd;
+} 
+
+input[name="mode"]:checked+label{ 
+	background-color: #eee; 
+} 
+
+input[name="mode"]:checked+label:hover{ 
+	background-color: #ddd; 
+} 
+
+input[type="submit"] {
+	border: 0;
+    font-size: inherit;
+    font-family: inherit;
+    color: inherit;
+    background-color: #eee;
+    padding: 5px 20px;
+    margin-top: 40px;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+	background-color: #ddd;
+}
+
+.selector {
+	display: inline-block;
+	padding: 40px 120px;
+	border: 2px solid #eee;
+	border-radius: 2px;
+}

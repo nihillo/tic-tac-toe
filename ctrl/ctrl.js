@@ -37,7 +37,7 @@ class CtrlGame {
 
 	bindEvent(element, row, col){
 		element.addEventListener('click', () => {
-			if (!this.game.finished) {
+			if (!this.game.finished && this.game.turn == 0) {
 				this.move(row, col);
 			}
 		});
@@ -52,11 +52,13 @@ class CtrlGame {
 	}
 
 	move (row, col) {
-		var element = this.view.getCell(row, col);
-		this.view.setStone(element, this.game.turn);
-		this.game.move(row, col);
-		this.checkFinished();
-		this.view.showMessage('turn', this.game.turn);
+
+			var element = this.view.getCell(row, col);
+			this.view.setStone(element, this.game.turn);
+			this.game.move(row, col);
+			this.checkFinished();
+			this.view.showMessage('turn', this.game.turn);
+
 	}
 
 	checkFinished() {

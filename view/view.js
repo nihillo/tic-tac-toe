@@ -14,12 +14,12 @@ class ViewSelector extends View {
 		this.selector.innerHTML = `
 			<form id ="selector-form">
 				<div>
-					<label for="mode">Select mode:</label>
-					<input type="radio" name="mode" value="pvp" checked><span class="selector">PvP</span>
-	  				<input type="radio" name="mode" value="pvai"><span class="selector">PvAI</span>
+					<label class="label-primary" for="mode">Select mode:</label><br />
+					<input type="radio" name="mode" id="mode-pvp" value="pvp" checked><label for="mode-pvp" class="selector-option-text">PvP</label>
+	  				<input type="radio" name="mode" id="mode-pvai" value="pvai"><label for="mode-pvai" class="selector-option-text">PvAI</label>
 				</div>
 				<div>
-					<label for="stones">Select stones:</label>
+					<label class="label-primary" for="stones">Select stones:</label><br />
 					<span class="stones-mode">Player 1</span>
 					<select name="stones">
 						<option value="straight">x | o</option>
@@ -73,15 +73,13 @@ class ViewGame extends View {
 	}
 
 	showMessage(message, ...args) {
-		
 
-		var player;
-		args[0] == 0 ? player = this.pl1text : player = this.pl2text;
+		var player, msg, trn;
 
-		var msg, trn;
 		switch (message) {
 			case 'winner':
 				this.content.removeChild(this.turn);
+				args[0] == 1 ? player = this.pl1text : player = this.pl2text;
 				msg = player + ' wins';
 				this.msg.innerHTML = msg;
 				break;
@@ -91,6 +89,7 @@ class ViewGame extends View {
 				this.msg.innerHTML = msg;
 				break;
 			case 'turn':
+				args[0] == 0 ? player = this.pl1text : player = this.pl2text;
 				trn = `${player}'s turn`;
 				this.turn.innerHTML = trn;
 				break;
