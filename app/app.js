@@ -44,20 +44,29 @@ class TicTacToe {
 		}
 	}
 
-	move (row, col) {
+	isValid(row, col) {
+		var valid = true;
 		if (this.board.cells[row][col].value){
+			valid = false;
 			console.log('Movement not allowed: cell already in use');
-		} else {
+		} 
+		return valid;
+	}
+
+	move (row, col) {
+		if (this.isValid(row, col)) {
+			
 			var cell = this.board.cells[row][col];
 			cell.setValue(this.players[this.turn].stone);
-			this.board.countCell();
+			this.board.countCells();
 			this.callTrackers(cell.trackers);
 			this.changeTurn();
-		}
+			
 
-		if (this.mode == 'pvai' && this.turn == 1 && !this.finished) {
-			console.log('AI moving');
-			this.players[1].move();
+			if (this.mode == 'pvai' && this.turn == 1 && !this.finished) {
+				// console.log('AI moving');
+				this.players[1].move();
+			}
 		}
 	}
 
@@ -95,14 +104,11 @@ class Board {
 			[new Cell(1, 0), new Cell(1, 1), new Cell(1, 2)],
 			[new Cell(2, 0), new Cell(2, 1), new Cell(2, 2)]
 		];
-
-		this.freeCellsCount = 9;
 	}
 
-	countCell() {
-		this.freeCellsCount--;
+	countCells() {
 
-		if (!this.freeCellsCount) {
+		if (this.freeCells.length === 0) {
 			this.game.finish();
 		}
 	}

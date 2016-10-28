@@ -39,7 +39,7 @@ class AI extends Player{
 			// console.log('foreach: ' + this);
 			if (!choice) {
 				var conditionEvaluation = this.evalCondition(condition, possibleCells);
-				console.log(conditionEvaluation);
+				// console.log(conditionEvaluation);
 				// if a choice was taken during condition evaluation, overwrite it
 				if (conditionEvaluation.choice) {
 					choice = conditionEvaluation.choice;

@@ -37,7 +37,7 @@ class CtrlGame {
 
 	bindEvent(element, row, col){
 		element.addEventListener('click', () => {
-			if (!this.game.finished && this.game.turn == 0) {
+			if (!this.game.finished && (this.mode == 'pvp' || (this.mode == 'pvai' && this.game.turn === 0))) {
 				this.move(row, col);
 			}
 		});
@@ -52,13 +52,13 @@ class CtrlGame {
 	}
 
 	move (row, col) {
-
-			var element = this.view.getCell(row, col);
-			this.view.setStone(element, this.game.turn);
-			this.game.move(row, col);
-			this.checkFinished();
-			this.view.showMessage('turn', this.game.turn);
-
+			if (this.game.isValid(row, col)) {
+				var element = this.view.getCell(row, col);
+				this.view.setStone(element, this.game.turn);
+				this.game.move(row, col);
+				this.checkFinished();
+				this.view.showMessage('turn', this.game.turn);
+			}
 	}
 
 	checkFinished() {
